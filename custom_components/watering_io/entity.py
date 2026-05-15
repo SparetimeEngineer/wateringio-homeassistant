@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import Entity
@@ -33,6 +34,7 @@ class WateringEntity(Entity):
             )
         )
 
+    @callback
     def _async_handle_update(self) -> None:
         self.schedule_update_ha_state()
 

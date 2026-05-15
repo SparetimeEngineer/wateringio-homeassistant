@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -25,6 +25,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     added_planters: set[str] = set()
     added_sensors: set[str] = set()
 
+    @callback
     def add_dynamic() -> None:
         new_entities = []
 
@@ -67,8 +68,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         if new_entities:
             async_add_entities(new_entities)
 
-    add_dynamic()
     entry.async_on_unload(async_dispatcher_connect(hass, SIGNAL_UPDATE, add_dynamic))
+    add_dynamic()
 
 
 class PumpBinarySensor(WateringEntity, BinarySensorEntity):
