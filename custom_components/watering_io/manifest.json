@@ -2,7 +2,7 @@
   "domain": "watering_io",
   "name": "Watering.IO Hub",
   "version": "0.1.0",
-  "documentation": "https://example.com/watering-io",
+  "documentation": "https://github.com/watering-io/wateringio-homeassistant",
   "requirements": [],
   "codeowners": [],
   "config_flow": true,
