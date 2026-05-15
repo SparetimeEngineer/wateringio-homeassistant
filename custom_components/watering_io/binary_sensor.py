@@ -8,7 +8,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .coordinator import SIGNAL_UPDATE, WateringIoCoordinator
-from .entity import WateringEntity
+from .entity import WateringEntity, WateringPlanterEntity
 from .helpers import extract_planter_id, extract_sensor_id
 
 
@@ -83,7 +83,7 @@ class PumpBinarySensor(WateringEntity, BinarySensorEntity):
         return bool(self.coordinator.state.pumps_status.get(self.field, False))
 
 
-class PlanterBinarySensor(WateringEntity, BinarySensorEntity):
+class PlanterBinarySensor(WateringPlanterEntity, BinarySensorEntity):
     def __init__(self, coordinator: WateringIoCoordinator, planter_id: str, field: str) -> None:
         super().__init__(coordinator)
         self.planter_id = planter_id

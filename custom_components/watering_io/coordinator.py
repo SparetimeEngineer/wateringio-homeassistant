@@ -13,6 +13,7 @@ from homeassistant.components.mqtt.models import ReceiveMessage
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
 from .const import DOMAIN
@@ -58,6 +59,26 @@ class WateringIoCoordinator:
     @property
     def device_available(self) -> bool:
         return self.state.availability_online
+    @property
+    def hub_device_info(self) -> DeviceInfo:
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.device_id)},
+            name=self.state.device_info.get("name", "Watering.IO Hub"),
+            manufacturer="Watering.IO",
+            model="Watering.IO Hub",
+            sw_version=self.state.device_info.get("firmwareVersion"),
+        )
+
+    def planter_device_info(self, planter_id: str) -> DeviceInfo:
+        hub_identifier = (DOMAIN, self.device_id)
+        return DeviceInfo(
+            identifiers={(DOMAIN, f"{self.device_id}_planter_{planter_id}")},
+            name=f"Planter {planter_id}",
+            manufacturer="Watering.IO",
+            model="Watering.IO Planter",
+            via_device=hub_identifier,
+        )
+
 
     def topic_is_stale(self, topic: str, seconds: int = 60) -> bool:
         last = self.state.topic_last_update.get(topic)

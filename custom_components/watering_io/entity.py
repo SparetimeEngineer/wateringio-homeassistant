@@ -22,13 +22,7 @@ class WateringEntity(Entity):
 
     @property
     def device_info(self) -> DeviceInfo:
-        return DeviceInfo(
-            identifiers={(DOMAIN, self.coordinator.device_id)},
-            name=self.coordinator.state.device_info.get("name", "Watering.IO Hub"),
-            manufacturer="Watering.IO",
-            model="Watering.IO Hub",
-            sw_version=self.coordinator.state.device_info.get("firmwareVersion"),
-        )
+        return self.coordinator.hub_device_info
 
     async def async_added_to_hass(self) -> None:
         self.async_on_remove(
@@ -41,3 +35,13 @@ class WateringEntity(Entity):
 
     def _async_handle_update(self) -> None:
         self.async_write_ha_state()
+
+
+class WateringPlanterEntity(WateringEntity):
+    def __init__(self, coordinator: WateringIoCoordinator, planter_id: str) -> None:
+        super().__init__(coordinator)
+        self.planter_id = planter_id
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        return self.coordinator.planter_device_info(self.planter_id)
