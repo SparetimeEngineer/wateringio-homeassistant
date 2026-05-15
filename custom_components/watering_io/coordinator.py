@@ -112,12 +112,24 @@ class WateringIoCoordinator:
                 unsub = await mqtt.async_subscribe(self.hass, topic, self._handle_status, qos=0)
                 self._unsubs.append(unsub)
 
+        # Always subscribe to wildcard status topics so planters/sensors are discovered
+        # even when schema entity arrays are missing, delayed, or malformed.
+        planter_template = topics.get("planterStatusTemplate", f"{self.prefix}/planter/{{id}}/status")
+        planter_wildcard = planter_template.replace("{id}", "+")
+        unsub = await mqtt.async_subscribe(self.hass, planter_wildcard, self._handle_status, qos=0)
+        self._unsubs.append(unsub)
+
+        sensor_template = topics.get("sensorStatusTemplate", f"{self.prefix}/sensors/{{sensorModbusId}}/status")
+        sensor_wildcard = sensor_template.replace("{sensorModbusId}", "+")
+        unsub = await mqtt.async_subscribe(self.hass, sensor_wildcard, self._handle_status, qos=0)
+        self._unsubs.append(unsub)
+
+        # Keep explicit subscriptions as well for strict schema behavior compatibility.
         for planter in self.state.schema.get("entities", {}).get("planters", []):
             planter_id = extract_planter_id(planter)
             if not planter_id:
                 continue
-            template = topics.get("planterStatusTemplate", f"{self.prefix}/planter/{{id}}/status")
-            topic = template.replace("{id}", planter_id)
+            topic = planter_template.replace("{id}", planter_id)
             unsub = await mqtt.async_subscribe(self.hass, topic, self._handle_status, qos=0)
             self._unsubs.append(unsub)
 
@@ -125,8 +137,7 @@ class WateringIoCoordinator:
             sensor_id = extract_sensor_id(sensor)
             if not sensor_id:
                 continue
-            template = topics.get("sensorStatusTemplate", f"{self.prefix}/sensors/{{sensorModbusId}}/status")
-            topic = template.replace("{sensorModbusId}", sensor_id)
+            topic = sensor_template.replace("{sensorModbusId}", sensor_id)
             unsub = await mqtt.async_subscribe(self.hass, topic, self._handle_status, qos=0)
             self._unsubs.append(unsub)
 
