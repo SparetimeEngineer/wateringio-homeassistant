@@ -16,6 +16,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
 from .const import DOMAIN
+from .helpers import extract_planter_id, extract_sensor_id
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -91,7 +92,7 @@ class WateringIoCoordinator:
                 self._unsubs.append(unsub)
 
         for planter in self.state.schema.get("entities", {}).get("planters", []):
-            planter_id = str(planter.get("id", "")).strip()
+            planter_id = extract_planter_id(planter)
             if not planter_id:
                 continue
             template = topics.get("planterStatusTemplate", f"{self.prefix}/planter/{{id}}/status")
@@ -100,7 +101,7 @@ class WateringIoCoordinator:
             self._unsubs.append(unsub)
 
         for sensor in self.state.schema.get("entities", {}).get("sensors", []):
-            sensor_id = str(sensor.get("sensorModbusId", "")).strip()
+            sensor_id = extract_sensor_id(sensor)
             if not sensor_id:
                 continue
             template = topics.get("sensorStatusTemplate", f"{self.prefix}/sensors/{{sensorModbusId}}/status")

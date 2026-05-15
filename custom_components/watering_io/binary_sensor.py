@@ -9,6 +9,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .coordinator import SIGNAL_UPDATE, WateringIoCoordinator
 from .entity import WateringEntity
+from .helpers import extract_planter_id, extract_sensor_id
+from .helpers import extract_planter_id, extract_sensor_id
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
@@ -25,7 +27,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     def add_dynamic() -> None:
         new_entities = []
         for planter in coordinator.state.schema.get("entities", {}).get("planters", []):
-            planter_id = str(planter.get("id", "")).strip()
+            planter_id = extract_planter_id(planter)
             if not planter_id or planter_id in added_planters:
                 continue
             added_planters.add(planter_id)
@@ -35,8 +37,37 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ])
 
         for sensor in coordinator.state.schema.get("entities", {}).get("sensors", []):
-            sensor_id = str(sensor.get("sensorModbusId", "")).strip()
+            sensor_id = extract_sensor_id(sensor)
             if not sensor_id or sensor_id in added_sensors:
+                continue
+            added_sensors.add(sensor_id)
+            new_entities.append(SensorOnlineBinarySensor(coordinator, sensor_id))
+
+        for planter_id in coordinator.state.planter_status:
+            if planter_id in added_planters:
+                continue
+            added_planters.add(planter_id)
+            for field in PLANTER_FIELDS:
+                new_entities.append(WateringPlanterSensor(coordinator, planter_id, field))
+
+        for sensor_id in coordinator.state.sensor_status:
+            if sensor_id in added_sensors:
+                continue
+            added_sensors.add(sensor_id)
+            for field in SENSOR_FIELDS:
+                new_entities.append(WateringDynamicSensor(coordinator, sensor_id, field))
+
+        for planter_id in coordinator.state.planter_status:
+            if planter_id in added_planters:
+                continue
+            added_planters.add(planter_id)
+            new_entities.extend([
+                PlanterBinarySensor(coordinator, planter_id, "watering"),
+                PlanterBinarySensor(coordinator, planter_id, "online"),
+            ])
+
+        for sensor_id in coordinator.state.sensor_status:
+            if sensor_id in added_sensors:
                 continue
             added_sensors.add(sensor_id)
             new_entities.append(SensorOnlineBinarySensor(coordinator, sensor_id))
