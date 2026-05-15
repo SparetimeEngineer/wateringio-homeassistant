@@ -100,6 +100,12 @@ class WateringIoCoordinator:
             (f"{self.prefix}/device/availability", self._handle_availability),
             (f"{self.prefix}/device/info", self._handle_device_info),
             (f"{self.prefix}/integration/schema", self._handle_schema),
+            # Fallback subscriptions so we can discover planter/sensor entities even
+            # before schema is received or when schema entity arrays are incomplete.
+            (f"{self.prefix}/system/status", self._handle_status),
+            (f"{self.prefix}/pumps/status", self._handle_status),
+            (f"{self.prefix}/planter/+/status", self._handle_status),
+            (f"{self.prefix}/sensors/+/status", self._handle_status),
         ):
             unsub = await mqtt.async_subscribe(self.hass, topic, cb, qos=0)
             self._unsubs.append(unsub)
