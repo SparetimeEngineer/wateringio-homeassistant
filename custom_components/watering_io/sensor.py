@@ -76,8 +76,7 @@ class WateringSystemSensor(WateringEntity, SensorEntity):
 
 class WateringPlanterSensor(WateringPlanterEntity, SensorEntity):
     def __init__(self, coordinator: WateringIoCoordinator, planter_id: str, field: str) -> None:
-        super().__init__(coordinator)
-        self.planter_id = planter_id
+        super().__init__(coordinator, planter_id)
         self.field = field
         self._attr_name = f"Planter {planter_id} {field}"
         self._attr_unique_id = f"{coordinator.device_id}_planter_{planter_id}_{field}"

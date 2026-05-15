@@ -34,7 +34,7 @@ class WateringEntity(Entity):
         )
 
     def _async_handle_update(self) -> None:
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
 
 class WateringPlanterEntity(WateringEntity):
