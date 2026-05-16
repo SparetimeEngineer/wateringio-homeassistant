@@ -1,12 +1,20 @@
-const CARD_VERSION = "0.1.7";
+const CARD_VERSION = "0.1.8";
 const STATIC_BASE = "/watering_io_static";
 const UNKNOWN_STATES = new Set(["unknown", "unavailable", "", null, undefined]);
 const CROPS = [
   { value: "generic", label: "Generic plant" },
   { value: "tomato", label: "Tomato" },
+  { value: "tomato_cherry", label: "Cherry tomato" },
+  { value: "tomato_yellow", label: "Yellow tomato" },
+  { value: "tomato_beefsteak", label: "Beefsteak tomato" },
+  { value: "tomato_roma", label: "Roma tomato" },
   { value: "basil", label: "Basil" },
   { value: "lettuce", label: "Lettuce" },
   { value: "chili", label: "Chili" },
+  { value: "pepper_red_bell", label: "Red bell pepper" },
+  { value: "pepper_yellow_bell", label: "Yellow bell pepper" },
+  { value: "pepper_jalapeno", label: "Jalapeno pepper" },
+  { value: "pepper_mixed_chili", label: "Mixed chili peppers" },
   { value: "strawberry", label: "Strawberry" },
   { value: "cucumber", label: "Cucumber" },
   { value: "herbs", label: "Herbs" },

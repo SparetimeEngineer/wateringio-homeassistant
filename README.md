@@ -50,9 +50,17 @@ Available crop presets:
 
 - `generic`
 - `tomato`
+- `tomato_cherry`
+- `tomato_yellow`
+- `tomato_beefsteak`
+- `tomato_roma`
 - `basil`
 - `lettuce`
 - `chili`
+- `pepper_red_bell`
+- `pepper_yellow_bell`
+- `pepper_jalapeno`
+- `pepper_mixed_chili`
 - `strawberry`
 - `cucumber`
 - `herbs`
@@ -62,7 +70,7 @@ Available crop presets:
 After installing or updating the integration and restarting Home Assistant, add this dashboard resource:
 
 ```text
-URL: /watering_io_static/watering-io-planter-card.js?v=0.1.7
+URL: /watering_io_static/watering-io-planter-card.js?v=0.1.8
 Resource type: JavaScript module
 ```
 
